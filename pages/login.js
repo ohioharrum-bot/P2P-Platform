@@ -35,10 +35,12 @@ export default function Login() {
         router.push("/");
       } else {
         if (!form.full_name.trim()) throw new Error("Please enter your name.");
+        const redirectUrl = `${window.location.origin}/auth/callback`;
         const { error } = await supabase.auth.signUp({
           email: form.email,
           password: form.password,
           options: {
+            emailRedirectTo: redirectUrl,
             data: {
               full_name: form.full_name,
               role: form.role,
@@ -58,10 +60,11 @@ export default function Login() {
   async function handleOAuth(provider) {
     setOauthLoading(provider);
     setError("");
+    const redirectUrl = `${window.location.origin}/auth/callback`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: redirectUrl,
       },
     });
     if (error) {
